@@ -47,21 +47,22 @@ public class SignaturesBuilder
         _signatureFuncs.Add(type =>
         {
             Type[][] argTypes = argT.Select(s => s(type)).ToArray();
-            int argSets = argTypes[0].Length;
+            var setCount = argTypes.Length;
+            int argCount = argTypes[0].Length;
 
-            if (argTypes.Any(x => x.Length != argSets))
+            if (argTypes.Any(x => x.Length != argCount))
                 throw new ArgumentException($"Signature '{signature}' was given an unequal set of arguments: {string.Join(", ", argTypes.Select(x => x.Length))}");
 
-            string[] resultSignatures = new string[argSets];
-            for (int setIdx = 0; setIdx < argTypes.Length; setIdx++)
+            string[] resultSignatures = new string[setCount];
+            for (int setIdx = 0; setIdx < setCount; setIdx++)
             {
                 string tmpSignature = signature;
-                for (int i = 0; i < argTypes.Length; i++)
+                for (int argIdx = 0; argIdx < argCount; argIdx++)
                 {
                     int length = tmpSignature.Length;
-                    int idxToReplace = i + 1;
+                    int idxToReplace = argIdx + 1;
 
-                    Type argType = argTypes[setIdx][i];
+                    Type argType = argTypes[setIdx][argIdx];
                     string argTypeString = GetTypeString(argType, type);
 
                     tmpSignature = Regex.Replace(tmpSignature, $@"\bT{idxToReplace}\b", argTypeString, RegexOptions.None);
@@ -101,7 +102,7 @@ public class SignaturesBuilder
         if (targetType == instanceType)
             return SelfType;
 
-        if (targetType.IsPrimitive)
+        if (targetType.IsPrimitive || targetType == typeof(string))
             // .NET Primitives are as "String", not "System.String"
             return targetType.Name;
 
