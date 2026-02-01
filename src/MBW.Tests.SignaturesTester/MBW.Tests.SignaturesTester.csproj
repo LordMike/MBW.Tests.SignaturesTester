@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-	</PropertyGroup>
+    <TargetFramework>$(DefaultTargetFramework)</TargetFramework>
+			</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Fastenshtein" Version="1.0.0.8" />
